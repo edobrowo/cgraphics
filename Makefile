@@ -1,18 +1,43 @@
-STD=c99
+### Options ###
 
-CXX=gcc
-CXXFLAGS=-std=${std} -Werror -Wall -Wpedantic -MMD
+CC		 := gcc
 
-OBJECTS=main.o color.o bitmap.o png.o
-DEPENDS=${OBJECTS:.o=.d}
-EXEC=a.out
+CPPFLAGS := -Iinclude -MMD -MP
+CFLAGS	 := -g -Werror -Wall -Wpedantic
+LDFLAGS	 := -Llib
+LDLIBS	 := -lm
 
-${EXEC}: ${OBJECTS}
-	${CXX} ${OBJECTS} -o ${EXEC}
+SRC_DIR	 := src
+OBJ_DIR	 := objects
+BIN_DIR	 := .
+EXECN	 := render
 
--include ${DEPENDS}
+### Files ###
 
-.PHONY: clean
+SRC		 := $(wildcard $(SRC_DIR)/*.c)
+OBJ		 := $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+EXEC	 := $(BIN_DIR)/$(EXECN)
+
+### Rules ###
+
+.PHONY: all clean
+
+all: $(EXEC)
+
+$(EXEC): $(OBJ) | $(BIN_DIR)
+	$(CC) $(LDFLAGS) $^ $(LDLIBS) -o $@
+	@echo "Build successful!"
+
+$(BIN_DIR):
+	mkdir -p $@
+
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+
+$(BIN_DIR) $(OBJ_DIR):
+	mkdir -p $@
 
 clean:
-	rm ${OBJECTS} ${EXEC}
+	@$(RM) -rv $(EXEC) $(OBJ_DIR)
+
+-include $(OBJ:.o=.d)

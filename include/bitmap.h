@@ -6,6 +6,8 @@
 #include <stdlib.h>
 #include "color.h"
 
+// Used in representing the frame buffer
+
 typedef struct {
     rgba_t* pixels;
     unsigned int width;

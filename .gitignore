@@ -1,5 +1,8 @@
+.vscode
+.DS_Store
+objects
 *.d
 *.o
 *.out
 *.png
-images
+render
